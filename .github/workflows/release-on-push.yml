@@ -16,7 +16,7 @@ jobs:
         id: release
         uses: rymndhng/release-on-push-action@master
         with:
-          bump_version_scheme: patch
+          bump_version_scheme: norelease
           tag_prefix: v
           release_name: <RELEASE_TAG>
           max_commits: 25

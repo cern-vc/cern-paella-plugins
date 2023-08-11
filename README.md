@@ -19,23 +19,13 @@ This repository contains the plugins for the Paella Player used at CERN.
 
 ## How to use
 
-To use the plugins, you need to add the following lines to your `config.json` file:
-
-```json
-{
-  "plugins": {
-    "ch.cern.paella.pluginName": {
-      "enabled": true,
-      "OTHER_CONFIG": "OTHER_CONFIG_VALUE"
-    }
-  }
-}
-```
+To use the plugins, you need to refer to the [Plugins Documentation](./docs/plugins.md) and add the plugins you want to use in the
+`config.json` file:
 
 To load the plugins in the Paella Player, you need to add the import :
 
 ```javascript
-import getCernCustomPluginsContext from "cern-paella-plugins";
+import getCernCustomPluginsContext from "@cern-vc/cern-paella-plugins";
 ```
 
 And then, you need to add the following line to the init parameters of the Paella Player:
@@ -72,10 +62,16 @@ To test the plugins, you need to run the following command:
 $ npm run dev
 ```
 
-Go to `http://localhost:8090/?id=test-video` to test the plugins. You will maybe need to chnages parameters in the url to test the plugins.
-
-For example to test the **nextTimeButtonPlugin** and the **prevTimeButtonPlugin**, you need to add the following parameters to the url: `&time=3m,4m,5m`.
+Go to `http://localhost:8090/?id=test-video` to test the plugins. You will maybe need to change parameters in the url to test the plugins.
 
 ---
 
-You will need to modify the `config/config.json` file to add the plugins you want to test, and the `repository_test/repository/test-video/data.json` file to modify the video you want to test.
+You will need to modify the `config/config.json` file to add the plugins you want to test, and the `repository_test/repository/test-video/data.json` file to modify the video you want to test. Refer to the [Plugins Documentation](./docs/plugins.md) to know how to configure the plugins.
+
+## How to publish
+
+Publish the npm package is done automatically by Github Actions when a new pull request is merged to the `main` branch.
+
+The version of the package is automatically incremented regarding the value of the version in the `package.json` file.
+
+If you try to merge a pull request without incrementing the version, no new package will be published.
