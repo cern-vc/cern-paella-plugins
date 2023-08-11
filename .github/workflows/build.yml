@@ -12,6 +12,8 @@ on:
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
+    # Disable this job if the version output of the workflow_run workflow is empty
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

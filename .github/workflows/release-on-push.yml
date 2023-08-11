@@ -26,3 +26,11 @@ jobs:
     outputs:
       tag_name: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
+
+  fail-on-empty-release:
+    needs: release-on-push
+    runs-on: ubuntu-latest
+    if: ${{ needs.release-on-push.outputs.version == '' }}
+    steps:
+      - name: Fail on empty release
+        run: exit 1
