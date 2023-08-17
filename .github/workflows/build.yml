@@ -10,10 +10,45 @@ on:
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
 jobs:
+  get-version:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.get-tag-name.outputs.tag_name }}
+    steps:
+      - name: Download artifact
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "version_number"
+            })[0];
+            let download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/version_number.zip`, Buffer.from(download.data));
+
+      - name: Unzip artifact
+        run: unzip version_number.zip
+
+      - name: Get tag name
+        id: get-tag-name
+        run: |
+          echo "tag_name=$(cat version_number)" >> $GITHUB_OUTPUT
+
   publish-npm:
     runs-on: ubuntu-latest
-    # Disable this job if the version output of the workflow_run workflow is empty
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: get-version
+    if: needs.get-version.outputs.tag_name != ''
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
