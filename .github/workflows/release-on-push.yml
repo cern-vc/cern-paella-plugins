@@ -27,10 +27,15 @@ jobs:
       tag_name: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
 
-  fail-on-empty-release:
+  store-version:
     needs: release-on-push
     runs-on: ubuntu-latest
-    if: ${{ needs.release-on-push.outputs.version == '' }}
     steps:
-      - name: Fail on empty release
-        run: exit 1
+      - name: Save version
+        run: |
+          mkdir -p ./version
+          echo "${{ needs.release-on-push.outputs.version }}" > ./version/version_number
+      - uses: actions/upload-artifact@v3
+        with:
+          name: version_number
+          path: ./version
